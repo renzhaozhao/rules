@@ -1,0 +1,36 @@
+name: Upload Files to Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送包含 v 开头的 Tag 时触发
+
+jobs:
+  upload-release-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: ${{ github.ref_name }}
+        body: "Release created automatically by GitHub Actions."
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ruleset/*
+        asset_name: ${{ github.event.release.tag_name }}-files
+        asset_content_type: application/octet-stream
