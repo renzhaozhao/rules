@@ -2,8 +2,7 @@ name: Upload Files to Release
 
 on:
   push:
-    tags:
-      - 'v*' # 当推送包含 v 开头的 Tag 时触发
+    branches: ['release']
 
 jobs:
   upload-release-assets:
