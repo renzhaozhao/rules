@@ -1,9 +1,25 @@
 # rules
 
+rule-providers
 ```yaml
 rule-providers:
-  my-custom-rules:
-    type: file
-    path: ./rule-set/custom-rules.yaml    # 引用 custom-rules.yaml 文件的路径
-    behavior: classical          # 规则匹配模式，可选 classical（默认）或 ipcidr
+  my-proxy:
+    type: http
+    url: 'https://github.com/renzhaozhao/rules/blob/main/proxy.yaml' 
+    behavior: classical          
+    path: ./custom-rules/proxy.yaml
+    interval: 3600
+  my-direct:
+    type: http
+    url: 'https://github.com/renzhaozhao/rules/blob/main/direct.yaml' 
+    behavior: classical          
+    path: ./custom-rules/direct.yaml
+    interval: 3600  
+```
+
+rules
+```yaml
+rules:
+  - RULE-SET,my-proxy,🔰国外流量
+  - RULE-SET,my-direct,DIRECT
 ```
