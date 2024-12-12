@@ -1,6 +1,7 @@
 payload:
-  - DOMAIN-SUFFIX,cocoyun.xyz
-  - DOMAIN-SUFFIX,v2ex.com
-  - DOMAIN-SUFFIX,vercel.app
-  - DOMAIN-SUFFIX,fly.dev
-  - DOMAIN-SUFFIX,github.io
+  - '+.cocoyun.xyz'
+  - '+.v2ex.com'
+  - '+.vercel.app'
+  - '+.fly.dev'
+  - '+.github.io'
+

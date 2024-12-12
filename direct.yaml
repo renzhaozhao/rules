@@ -1,4 +1,4 @@
 payload:
-  - DOMAIN-SUFFIX,baidu.com
-  - DOMAIN-SUFFIX,kufei.org
-  - DOMAIN-SUFFIX,rousi.zip
+  - '+.baidu.com'
+  - '+.kufei.org'
+  - '+.rousi.zip'
