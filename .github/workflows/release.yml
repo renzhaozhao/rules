@@ -1,42 +1,65 @@
-name: Upload Files to Release
-
+name: Generate RULE-SET for Premium Edition of Clash
 on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 22 * * *"
   push:
-    branches: ['release']
-
+    branches:
+      - master
+    paths-ignore:
+      - "**/README.md"
 jobs:
-  upload-release-assets:
+  build:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Set variables
+        run: |
+          echo "RELEASE_NAME=Released on $(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "custom_direct=https://raw.githubusercontent.com/renzhaozhao/rules/release/direct.yaml" >> $GITHUB_ENV
+          echo "custom_proxy=https://raw.githubusercontent.com/renzhaozhao/rules/release/proxy.yaml" >> $GITHUB_ENV
+        shell: bash
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout the "hidden" branch
+        uses: actions/checkout@v4
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
-          body: |
-            Release notes for v1.0.0
+          ref: hidden
+
+      - name: Generate direct.yaml file
+        run: |
+          echo "payload:" > direct.yaml
+          curl -sSL ${custom_direct} | grep -E "^(full|domain):" | awk -F ':' '{printf "  - |+.%s|\n", $2}' | sed "s/|/'/g" >> direct.yaml
+
+      - name: Generate proxy.yaml file
+        run: |
+          echo "payload:" > proxy.yaml
+          curl -sSL ${custom_proxy} | grep -E "^(full|domain):" | awk -F ':' '{printf "  - |+.%s|\n", $2}' | sed "s/|/'/g" >> proxy.yaml
+
+      - name: Move files to publish directory
+        run: |
+          mkdir -p publish
+          cp *.yaml ./publish/
+
+      - name: Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.TAG_NAME }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
+          files: |
+            ./publish/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ruleset/*
-          asset_name: ${{ github.event.release.tag_name }}-files
-          asset_content_type: application/octet-stream
+
+      - name: Git push assets to "release" branch
+        run: |
+          cd publish || exit 1
+          git init
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b release
+          git add .
+          git commit -m "${{ env.RELEASE_NAME }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git push -f origin release
