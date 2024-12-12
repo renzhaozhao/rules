@@ -17,8 +17,8 @@ jobs:
         run: |
           echo "RELEASE_NAME=Released on $(date +%Y%m%d%H%M)" >> $GITHUB_ENV
           echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
-          echo "custom_direct=https://raw.githubusercontent.com/renzhaozhao/rules/release/direct.yaml" >> $GITHUB_ENV
-          echo "custom_proxy=https://raw.githubusercontent.com/renzhaozhao/rules/release/proxy.yaml" >> $GITHUB_ENV
+          echo "custom_direct=https://raw.githubusercontent.com/renzhaozhao/rules/main/direct.yaml" >> $GITHUB_ENV
+          echo "custom_proxy=https://raw.githubusercontent.com/renzhaozhao/rules/main/proxy.yaml" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout the "hidden" branch
@@ -29,12 +29,12 @@ jobs:
       - name: Generate direct.yaml file
         run: |
           echo "payload:" > direct.yaml
-          curl -sSL ${custom_direct} | grep -E "^(full|domain):" | awk -F ':' '{printf "  - |+.%s|\n", $2}' | sed "s/|/'/g" >> direct.yaml
+          curl -sSL ${custom_direct} >> direct.yaml
 
       - name: Generate proxy.yaml file
         run: |
           echo "payload:" > proxy.yaml
-          curl -sSL ${custom_proxy} | grep -E "^(full|domain):" | awk -F ':' '{printf "  - |+.%s|\n", $2}' | sed "s/|/'/g" >> proxy.yaml
+          curl -sSL ${custom_proxy} >> proxy.yaml
 
       - name: Move files to publish directory
         run: |
