@@ -1,4 +1,7 @@
 payload:
   - '+.baidu.com'
-  - '+.kufei.org'
-  - '+.rousi.zip'
+  - '*.kufei.org'
+  - '*.rousi.zip'
+  - '*.crabpt.vip'
+  - '*.renzhao.icu'
+  
