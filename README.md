@@ -6,13 +6,13 @@ rule-providers:
   my-proxy:
     type: http
     url: 'https://github.com/renzhaozhao/rules/blob/main/proxy.yaml' 
-    behavior: classical
+    behavior: domain
     path: ./ruleset/proxy.yaml
     interval: 3600
   my-direct:
     type: http
     url: 'https://github.com/renzhaozhao/rules/blob/main/direct.yaml' 
-    behavior: classical
+    behavior: domain
     path: ./ruleset/direct.yaml
     interval: 3600
   reject:
@@ -25,7 +25,6 @@ rule-providers:
 
 rules
 ```yaml
-rules:
   - RULE-SET,my-proxy,🔰国外流量
   - RULE-SET,my-direct,DIRECT
   - RULE-SET,reject,REJECT
