@@ -1,3 +1,4 @@
+// verge 全局扩展脚本
 // Define main function (script entry)
 
 const prependRule = [
