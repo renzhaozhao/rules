@@ -49,6 +49,14 @@ const ruleProviders = {
     path: "./ruleset/CNIP.mrs",
     interval: 86400,
   },
+  "anti-ad": {
+    type: "http",
+    behavior: "domain",
+    format: "mrs",
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ads-all.mrs",
+    path: "./ruleset/anti-ad.mrs",
+    interval: 86400,
+  },
 };
 
 // 从代理列表里按名称筛选出美国节点
@@ -91,6 +99,7 @@ const prependRule = [
   "RULE-SET,Google,🤖 AI工具",
   "RULE-SET,CNDomain,DIRECT",
   "RULE-SET,CNIP,DIRECT,no-resolve",
+  "RULE-SET,anti-ad,REJECT",
 ];
 
 function main(config, profileName) {
